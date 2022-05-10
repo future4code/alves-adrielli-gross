@@ -66,3 +66,5 @@ let resultado6 = numero1 / numero2
 console.log("O primeiro número é divisível pelo segundo?", resultado6==0)
 let resultado7 = numero2 / numero1
 console.log("O segundo número é divisivel pelo primeiro?", resultado7==0)
+
+
