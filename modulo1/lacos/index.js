@@ -1,5 +1,32 @@
-//
-const userPets = +prompt("Quantos pets você tem?")
+// 1. O console imprime o valor de 10 por conta do laço, valor +=. 
+let valor = 0
+for(let i = 0; i < 5; i++) {
+  valor += i
+}
+console.log(valor)
+// 2. a) O console irá imprimir todos os número da lista que são maiores que 18.
+const lista = [10, 11, 12, 15, 18, 19, 21, 23, 25, 27, 30]
+for (let numero of lista) {
+  if (numero > 18) {
+		console.log(numero)
+	}
+}
+// 2. b) Não
+
+// 3. O console imprimirá 4 linhas de (*).
+const quantidadeTotal = Number(prompt("Digite a quantidade de linhas: "))
+let quantidadeAtual = 0
+while(quantidadeAtual < quantidadeTotal){
+  let linha = ""
+  for(let asteriscos = 0; asteriscos < quantidadeAtual + 1; asteriscos++){
+    linha += "*"
+  }
+  console.log(linha)
+  quantidadeAtual++
+}
+
+// 1. a) b) c)
+const userPets = +prompt("Quantos animais de estimação você tem?")
 let arrayPets = []
 if (userPets===0) {
     console.log("Que pena! Você pode adotar um.")
