@@ -92,3 +92,5 @@ function numerLis(arrayNum) {
     }console.log(`O número mais alto do array original é o ${aumen}, e o mais baixo é o ${dimin}.`)
 }
 numerLis(arrayOriginal)
+
+
