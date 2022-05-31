@@ -1,0 +1,40 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: -8px;
+    background-color: mediumvioletred;
+}
+
+footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: -8px;
+    background-color: mediumvioletred;
+}
+
+.menu {
+    display: inline;
+    justify-content: flex-start;
+}
+
+.menu-items {
+    flex-direction: column;
+    width: 250px;
+    height: 46.8vmax;
+    margin: 8px 0 0 -8px;
+    background-color: #f2d0e0;
+    list-style-type: none;
+    justify-content: left;
+}
+
+.menu-items a {
+    margin: 5px 0;
+    color: #120602;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-size: 15px;
+    justify-content:left;
+}
