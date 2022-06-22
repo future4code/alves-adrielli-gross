@@ -1,56 +1,39 @@
 import React from 'react';
 import axios from 'axios';
+import telacadastro from './components/telacadastro';
+import telalistauser from './components/telalistauser'
 
-class App extends React.Component() {
+
+export default class App extends React.Component() {
   state = {
-    nomeUsuario: '',
-    emailUsuario: '',
-    usuario: [],
-    logado: false,
-  }
-  
-  setNomeUsuario = (event) => {
-    this.setState({nomeUsuario : event.target.value})
+    telaAtual: 'cadastro',
   }
 
-  setEmailUsuario = (event) => {
-    this.setState({email : event.target.value})
-  }
-
-  enviarUsuario = () => {
-    body = {
-
+  escolheTela = () => {
+    switch (this.state.telaAtual){
+      case "cadastro":
+        return <telacadastro irParaLista={this.irParaLista} />
+      case "lista":
+        return <telalistauser irParaCadastro={this.irParaCadastro} />
+      default:
+        return <div>Erro! Página não encontrada.</div>
     }
   }
 
-  const userAxio = axios.post(
-    'https://us-central1-labenu-apis.cloudfunctions.net/labenusers/users',
-    {
-      headers: {
-        Authorization: "adrielli-gross-alves"
-      }
-    }
-  )
+  irParaCadastro = () => {
+    this.setState({telaAtual: "cadastro"})
+  }
+
+  irParaLista = () => {
+    this.setState({telaAtual: "lista"})
+  }
 
   render() {
-    let telaUsuario
-    if (this.state.logado === false) {
-      userTela =
-      <div>
-        <label>Seu nome</label>
-        <input value = {this.state.nomeUsuario} onChange={this.setNomeUsuario} placeholder = 'Seu nome'/>
-        <label>Seu email</label>
-        <input value = {this.state.emailUsuario} onChange={this.setEmailUsuario} placeholder = 'Seu email'/>
-        <buttom onClick = {this.enviarUsuario}>Enviar</buttom>
-      </div>
-    } else {
-    }
     return (
-      <div> 
-        <button onClick = {this.mostrarUsuario}>Mudar Tela</button>
+      <div>
+        {this.escolheTela()}
       </div>
-  );
+
+    )
   }
 }
-
-export default App;
