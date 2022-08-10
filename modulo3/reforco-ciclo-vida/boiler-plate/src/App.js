@@ -31,8 +31,6 @@ function App() {
 
   const selectTarefa = (id) => {};
 
-  const onChangeFilter = (event) => {};
-
   const listaFiltrada = tarefas.filter((tarefa) => {
     switch (filtro) {
       case "pendentes":
