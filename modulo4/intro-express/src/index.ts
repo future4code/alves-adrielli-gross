@@ -102,12 +102,12 @@ const posts: postsProperties[] = [
     {id: 6,
     title: "Haru",
     body: "Gatinho de 3 anos cinza e branco, pelinho curto",
-    userId: 3}  
+    userId: 3},  
 
     {id: 7,
     title: "Ruby",
     body: "Gatinho de 3 anos calica, pelinho curto",
-    userId: 2}
+    userId: 2},
 
     {id: 8,
     title: "Ollie",
