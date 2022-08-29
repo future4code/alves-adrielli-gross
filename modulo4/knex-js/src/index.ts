@@ -1,9 +1,15 @@
 import express, {Express} from 'express'
 import cors from 'cors'
-import { AddressInfo } from "net";
 import knex from "knex";
 import dotenv from "dotenv";
+import { AddressInfo } from "net";
 import { Request, Response } from "express"
+
+dotenv.config();
+const app: Express = express();
+
+app.use(express.json());
+app.use(cors());
 
 export const connection = knex({
 	client: "mysql",
@@ -16,13 +22,119 @@ export const connection = knex({
   }
 });
 
+// Exercício 1. a) A conexão raw é uma pesquisa "crua" que retorna exatamente o que o MySQL devolveu.
 
-dotenv.config();
-const app: Express = express();
+// 1. b)
+const getActorByName = async (name: string): Promise<any> => {
+  const result = await connection.raw(`
+    SELECT name FROM Actor WHERE name = '${name}'
+  `)
+  return result[0][0]
+}
 
-app.use(express.json());
-app.use(cors());
+(async() =>{
+  console.log(await getActorByName("Pessoa1"))
+})()
 
+// 1. c)
+const getActorByGender = async (gender: string): Promise<any> => {
+  const result1 = await connection.raw(`
+  SELECT COUNT(*), gender FROM Actor WHERE gender = '${gender}' 
+  `)
+  return result1[0][0]
+}
+
+(async() => {
+  console.log(await getActorByGender("male"))
+})();
+
+(async() => {
+  console.log(await getActorByGender("female"))
+})();
+
+// Exercício 2. a)
+const updateSalary = async(id: string, salary: number): Promise<void> => {
+  await connection("Actor").update({
+    salary: salary
+  })
+  .where("id", id)
+};
+
+(async() => {
+  console.log(await updateSalary("001", 658471))
+})();
+
+// 2. b)
+const deleteActor = async(id: string): Promise<any> => {
+  await connection("Actor").delete().where("id", id)
+};
+
+(async() => {
+  console.log(await deleteActor("007"))
+})();
+
+// 2. c)
+const averageSalaryByGenre = async (gender: string): Promise<any> => {
+  const result2 = await connection.raw(`
+  SELECT AVG(salary) FROM Actor WHERE gender = '${gender}' 
+  `)
+  return result2[0][0]
+}
+
+(async() => {
+  console.log(await averageSalaryByGenre("male"))
+})();
+
+(async() => {
+  console.log(await averageSalaryByGenre("female"))
+})();
+
+// Exercício 3. a)
+const getActorById = async (id: string): Promise<any> => {
+  const result = await connection.raw(`
+    SELECT * FROM Actor WHERE id = '${id}'
+  `)
+
+	return result[0][0]
+}
+
+app.get("/actor/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const actor = await getActorById(id);
+
+    res.status(200).send(actor)
+  } catch (err) {
+    res.status(400).send("Unexpected error");
+  }
+});
+
+// 3. b)
+app.get("/actor", async (req: Request, res: Response) => {
+  try {
+    const gender = await getActorByGender(req.query.gender as string)
+    res.status(200).send({quantity: gender,});
+  } catch (error) {
+    res.status(500).send("Unexpected error")
+  }})
+
+// Exercício 4. a)
+app.put("/actorupdate", async (req: Request, res: Response) => {
+  try {
+    await updateSalary(req.body.id, req.body.salary);
+    res.status(200).send("Success!");
+  } catch(err){
+  res.status(500).send("Unexpected error")
+  }});
+
+// 4. b)
+app.delete("/actor/delete/:id", async (req: Request, res: Response) => {
+  try {
+    await deleteActor(req.params.id);
+    res.status(200).send("Success!");
+  } catch(err){
+    res.status(500).send("Unexpected error");
+  }})
 
 const server = app.listen(process.env.PORT || 3003, () => {
     if (server) {
@@ -34,121 +146,3 @@ const server = app.listen(process.env.PORT || 3003, () => {
 });
 
 
-
-// Esse arquivo seria o index.ts
-
-const getActorById = async (id: string): Promise<any> => {
-  const result = await connection.raw(`
-    SELECT * FROM Actor WHERE id = '${id}'
-  `)
-
-	return result[0][0]
-}
-
-
-// Assim a chamada funciona fora dos endpoints com .then()/.catch
-getActorById("001")
-	.then(result => {
-		console.log(result)
-	})
-	.catch(err => {
-		console.log(err)
-	});
-
-// Assim a chamada funciona fora dos endpoints com await
-(async () => {
-  console.log(await getActorById("001") )
-})()
-
-
-// Ou então podemos chamá-la dentro de um endpoint
-app.get("/users/:id", async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id
-
-    console.log(await getActorById(id))
-
-    res.end()
-  } catch (error) {
-    res.status(500).send("Unexpected error")
-  }
-}) // bata no http://localhost:3003/users/001 e veja o que acontece no terminal
-
-// Exercício 1. a) Raw é uma busca simples no banco de dados sem nenhum tipo de filtragem.
-
-// 1. b)
-const getActorByName = async (name: string): Promise<any> => {
-  const result = await connection.raw(`
-    SELECT * FROM Actor WHERE name = '${name}'
-  `)
-
-	return result[0][0]
-}
-
-getActorByName("Pessoa1")
-	.then(result => {
-		console.log(result)
-	})
-	.catch(err => {
-		console.log(err)
-	});
-
-// 1. c)
-const getActorMale = async (gender: string): Promise<any> => {
-  const result = await connection.raw(`
-    SELECT COUNT(*) FROM Actor GROUP BY gender = '${gender}'
-  `)
-
-	return result[0][0]
-}
-
-getActorMale("male")
-	.then(result => {
-		console.log(result)
-	})
-	.catch(err => {
-		console.log(err)
-	});
-
-  const getActorFemale = async (gender: string): Promise<any> => {
-    const resultFemale = await connection.raw(`
-      SELECT COUNT(*) FROM Actor GROUP BY gender = '${gender}'
-    `)
-  
-    return resultFemale[0][0]
-  }
-  getActorFemale("female")
-	.then(resultFemale => {
-		console.log(resultFemale)
-	})
-	.catch(err => {
-		console.log(err)
-	});
-
-  // Exercício 2.
-  const createActor = async (
-    id: string,
-    name: string,
-    salary: number,
-    dateOfBirth: Date,
-    gender: string
-  ): Promise<void> => {
-    await connection
-      .insert({
-        id: id,
-        name: name,
-        salary: salary,
-        birth_date: dateOfBirth,
-        gender: gender,
-      })
-      .into("Actor");
-  };
-
-  // 2. a)
-  const updateActor = async (id: string, salary: number): Promise<any> => {
-    await connection("Actor")
-      .update({
-        salary: salary,
-      })
-      .where("id", id);
-  };
